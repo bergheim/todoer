@@ -4,7 +4,6 @@ defmodule CsvImporterTest do
 
   test "can load todos from a file" do
     todo_list = Todoer.CsvImporter.import("todos.csv")
-    todo_list = Todoer.new(todo_list)
 
     assert Todoer.entries(todo_list) == [
              %Todo{date: ~D[2024-09-09], title: "Jump", id: 1},
