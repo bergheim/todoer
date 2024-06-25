@@ -30,6 +30,19 @@ defmodule TodoerTest do
            ]
   end
 
+  test "can add multiple new entries" do
+    todo_list =
+      Todoer.new([
+        %Todo{date: ~D[2024-01-01], title: "Some"},
+        %Todo{date: ~D[2024-11-01], title: "blue"}
+      ])
+
+    assert Todoer.entries(todo_list) == [
+             %Todo{date: ~D[2024-01-01], title: "Some", id: 1},
+             %Todo{date: ~D[2024-11-01], title: "blue", id: 2}
+           ]
+  end
+
   test "can find an entry for a date" do
     todo_list = generate_todos()
 

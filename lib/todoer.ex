@@ -8,7 +8,14 @@ defmodule Todoer do
   end
 
   defstruct next_id: 1, entries: %{}
+
   def new(), do: %Todoer{}
+
+  def new(entries) do
+    Enum.reduce(entries, %Todoer{}, fn entry, acc ->
+      add_entry(acc, entry)
+    end)
+  end
 
   def add_entry(todo_list, entry) do
     entry = Map.put(entry, :id, todo_list.next_id)
