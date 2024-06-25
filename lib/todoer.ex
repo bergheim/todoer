@@ -60,3 +60,11 @@ defmodule Todoer do
     |> Enum.filter(fn entry -> entry.date == date end)
   end
 end
+
+defimpl String.Chars, for: Todoer do
+  def to_string(todo_list) do
+    Enum.map(Todoer.entries(todo_list), fn entry ->
+      Date.to_string(entry.date) <> ": " <> entry.title <> "\n"
+    end)
+  end
+end
