@@ -82,9 +82,9 @@ end
 
 defimpl String.Chars, for: Todoer do
   def to_string(todo_list) do
-    Enum.map(Todoer.entries(todo_list), fn entry ->
-      String.Chars.to_string(entry) <> "\n"
-    end)
+    Todoer.entries(todo_list)
+    |> Enum.map(fn entry -> String.Chars.to_string(entry) end)
+    |> Enum.join("\n")
   end
 end
 

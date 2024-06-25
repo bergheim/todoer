@@ -164,8 +164,9 @@ defmodule TodoerTest do
            ]
   end
 
-  test "can postpone a todo" do
+  test "can postpone a TODO" do
     todo = %Todo{date: ~D[2024-11-01], title: "of", id: 3}
+    # TODO if we set the seed for the rng we should be able to use that as well
     todo = Todoer.postpone(todo, 8)
 
     assert todo == %Todo{date: ~D[2024-11-09], title: "of", id: 3}
