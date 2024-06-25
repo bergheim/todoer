@@ -163,4 +163,11 @@ defmodule TodoerTest do
              %Todo{date: ~D[2024-11-01], title: "blue", id: 4}
            ]
   end
+
+  test "can postpone a todo" do
+    todo = %Todo{date: ~D[2024-11-01], title: "of", id: 3}
+    todo = Todoer.postpone(todo, 8)
+
+    assert todo == %Todo{date: ~D[2024-11-09], title: "of", id: 3}
+  end
 end

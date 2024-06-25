@@ -67,6 +67,11 @@ defmodule Todoer do
     Todoer.entries(todo_list)
     |> Enum.filter(fn todo -> todo.status == nil end)
   end
+
+  def postpone(todo, days \\ Enum.random(1..10)) do
+    date = Date.add(todo.date, days)
+    %Todo{todo | date: date}
+  end
 end
 
 defimpl String.Chars, for: Todoer do
