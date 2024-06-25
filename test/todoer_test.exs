@@ -10,10 +10,6 @@ defmodule TodoerTest do
     |> Todoer.add_entry(%Todo{date: ~D[2024-11-01], title: "blue"})
   end
 
-  test "greets the world" do
-    assert Todoer.hello() == :world
-  end
-
   test "a new todo list is empty" do
     assert Todoer.new() == %Todoer{}
   end

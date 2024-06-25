@@ -3,10 +3,6 @@ defmodule Todo do
 end
 
 defmodule Todoer do
-  def hello do
-    :world
-  end
-
   defstruct next_id: 1, entries: %{}
 
   def new(), do: %Todoer{}
