@@ -64,7 +64,13 @@ end
 defimpl String.Chars, for: Todoer do
   def to_string(todo_list) do
     Enum.map(Todoer.entries(todo_list), fn entry ->
-      Date.to_string(entry.date) <> ": " <> entry.title <> "\n"
+      String.Chars.to_string(entry) <> "\n"
     end)
+  end
+end
+
+defimpl String.Chars, for: Todo do
+  def to_string(todo) do
+    Date.to_string(todo.date) <> ": " <> todo.title
   end
 end
