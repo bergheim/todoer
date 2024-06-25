@@ -43,6 +43,11 @@ defmodule TodoerTest do
            ]
   end
 
+  test "can add new entries using comprehension" do
+    todo_list = generate_todos()
+    assert Enum.into(todo_list, Todoer.new()) == todo_list
+  end
+
   test "can find an entry for a date" do
     todo_list = generate_todos()
 

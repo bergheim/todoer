@@ -74,3 +74,51 @@ defimpl String.Chars, for: Todo do
     Date.to_string(todo.date) <> ": " <> todo.title
   end
 end
+
+defimpl Collectable, for: Todoer do
+  def into(original) do
+    {original, &into_callback/2}
+  end
+
+  defp into_callback(todo_list, {:cont, entry}) do
+    Todoer.add_entry(todo_list, entry)
+  end
+
+  defp into_callback(todo_list, :done), do: todo_list
+  defp into_callback(_todo_list, :halt), do: :ok
+end
+
+defimpl Enumerable, for: Todoer do
+  @impl true
+  @spec count(Todoer.t()) :: {:ok, non_neg_integer()}
+  def count(%Todoer{entries: entries}) do
+    {:ok, map_size(entries)}
+  end
+
+  @impl true
+  def member?(%Todoer{entries: entries}, item) do
+    {:ok, Enum.any?(entries, fn {_id, value} -> value == item end)}
+  end
+
+  @impl true
+  def slice(_todoer) do
+    {:error, __MODULE__}
+  end
+
+  @impl true
+  def reduce(%Todoer{entries: entries}, acc, fun) do
+    enumerable = Map.values(entries)
+    do_reduce(enumerable, acc, fun)
+  end
+
+  defp do_reduce(_, {:halt, acc}, _fun), do: {:halted, acc}
+  defp do_reduce([], {:cont, acc}, _fun), do: {:done, acc}
+
+  defp do_reduce([head | tail], {:cont, acc}, fun) do
+    do_reduce(tail, fun.(head, acc), fun)
+  end
+
+  defp do_reduce(list, {:suspend, acc}, fun) do
+    {:suspended, acc, &do_reduce(list, &1, fun)}
+  end
+end
