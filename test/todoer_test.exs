@@ -112,6 +112,50 @@ defmodule TodoerTest do
            ]
   end
 
+  test "can set a TODO as done" do
+    todo_list = [
+      %Todo{date: ~D[2024-01-01], title: "Some", id: 1}
+    ]
+
+    assert Todoer.done(List.first(todo_list)) == %Todo{
+             date: ~D[2024-01-01],
+             title: "Some",
+             id: 1,
+             status: :done
+           }
+  end
+
+  test "can get all DONE TODOs" do
+    todo_list =
+      generate_todos()
+      |> Todoer.add_entry(%Todo{date: ~D[2024-02-01], title: "We", status: :done})
+      |> Todoer.add_entry(%Todo{date: ~D[2024-02-02], title: "Are", status: nil})
+      |> Todoer.add_entry(%Todo{date: ~D[2024-02-02], title: "Done", status: :done})
+
+    assert Enum.count(todo_list) == 7
+
+    assert Todoer.get_done(todo_list) == [
+             %Todo{date: ~D[2024-02-01], title: "We", status: :done, id: 5},
+             %Todo{date: ~D[2024-02-02], title: "Done", status: :done, id: 7}
+           ]
+  end
+
+  test "can get all pending TODOs" do
+    todo_list =
+      generate_todos()
+      |> Todoer.add_entry(%Todo{date: ~D[2024-02-01], title: "We", status: :done})
+      |> Todoer.add_entry(%Todo{date: ~D[2024-02-02], title: "Are", status: nil})
+      |> Todoer.add_entry(%Todo{date: ~D[2024-02-02], title: "Done", status: :done})
+
+    assert Todoer.get_active(todo_list) == [
+             %Todo{date: ~D[2024-01-01], title: "Some", id: 1},
+             %Todo{date: ~D[2024-10-01], title: "kind", id: 2},
+             %Todo{date: ~D[2024-11-01], title: "of", id: 3},
+             %Todo{date: ~D[2024-11-01], title: "blue", id: 4},
+             %Todo{date: ~D[2024-02-02], title: "Are", status: nil, id: 6}
+           ]
+  end
+
   test "updating an invalid entry returns the original list" do
     todo_list = generate_todos()
 

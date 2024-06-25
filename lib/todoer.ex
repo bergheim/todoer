@@ -1,5 +1,5 @@
 defmodule Todo do
-  defstruct [:id, :date, :title]
+  defstruct [:id, :date, :title, :status]
 end
 
 defmodule Todoer do
@@ -58,6 +58,18 @@ defmodule Todoer do
     todo_list.entries
     |> Map.values()
     |> Enum.filter(fn entry -> entry.date == date end)
+  end
+
+  def done(todo), do: Map.put(todo, :status, :done)
+
+  def get_done(todo_list) do
+    Todoer.entries(todo_list)
+    |> Enum.filter(fn todo -> todo.status == :done end)
+  end
+
+  def get_active(todo_list) do
+    Todoer.entries(todo_list)
+    |> Enum.filter(fn todo -> todo.status == nil end)
   end
 end
 
