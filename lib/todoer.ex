@@ -22,4 +22,10 @@ defmodule Todoer do
     |> Map.values()
     |> Enum.filter(fn entry -> entry.date == date end)
   end
+
+  def get_for_date(todo_list, date) do
+    todo_list.entries
+    |> Map.values()
+    |> Enum.filter(fn entry -> entry.date == date end)
+  end
 end
