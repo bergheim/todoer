@@ -18,9 +18,10 @@ defmodule Todoer do
   end
 
   def update_entry(todo_list, entry) do
-    # Map.update(todo_list.entries, entry.id, todo_list.entries, fn e -> Map.merge(e, entry) end)
     updated_entries =
-      Map.update(todo_list.entries, entry.id, todo_list.entries, fn _ -> entry end)
+      Map.update(todo_list.entries, entry.id, todo_list.entries, fn e ->
+        Map.merge(e, entry, fn _key, v1, v2 -> if v2 == nil, do: v1, else: v2 end)
+      end)
 
     %{todo_list | entries: updated_entries}
   end

@@ -65,6 +65,23 @@ defmodule TodoerTest do
            ]
   end
 
+  test "can update an existing entry with a partial struct" do
+    todo_list = generate_todos()
+
+    new_entry = %Todo{
+      title: "of other",
+      id: 3
+    }
+
+    assert Todoer.update_entry(todo_list, new_entry)
+           |> Todoer.entries() == [
+             %Todo{date: ~D[2024-01-01], title: "Some", id: 1},
+             %Todo{date: ~D[2024-10-01], title: "kind", id: 2},
+             %Todo{date: ~D[2024-11-01], title: "of other", id: 3},
+             %Todo{date: ~D[2024-11-01], title: "blue", id: 4}
+           ]
+  end
+
   test "can update an existing entry by id" do
     todo_list = generate_todos()
 
