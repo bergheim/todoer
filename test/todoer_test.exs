@@ -46,4 +46,46 @@ defmodule TodoerTest do
              %Todo{date: ~D[2024-11-01], title: "blue", id: 4}
            ]
   end
+
+  test "can update an existing entry by struct" do
+    todo_list = generate_todos()
+
+    new_entry = %Todo{
+      date: ~D[2024-11-01],
+      title: "of other",
+      id: 3
+    }
+
+    assert Todoer.update_entry(todo_list, new_entry)
+           |> Todoer.entries() == [
+             %Todo{date: ~D[2024-01-01], title: "Some", id: 1},
+             %Todo{date: ~D[2024-10-01], title: "kind", id: 2},
+             %Todo{date: ~D[2024-11-01], title: "of other", id: 3},
+             %Todo{date: ~D[2024-11-01], title: "blue", id: 4}
+           ]
+  end
+
+  test "can update an existing entry by id" do
+    todo_list = generate_todos()
+
+    assert Todoer.update_entry(todo_list, 1, &Map.put(&1, :title, "Some other"))
+           |> Todoer.entries() == [
+             %Todo{date: ~D[2024-01-01], title: "Some other", id: 1},
+             %Todo{date: ~D[2024-10-01], title: "kind", id: 2},
+             %Todo{date: ~D[2024-11-01], title: "of", id: 3},
+             %Todo{date: ~D[2024-11-01], title: "blue", id: 4}
+           ]
+  end
+
+  test "updating an invalid entry returns the original list" do
+    todo_list = generate_todos()
+
+    assert Todoer.update_entry(todo_list, 10, &Map.put(&1, :title, "Some other"))
+           |> Todoer.entries() == [
+             %Todo{date: ~D[2024-01-01], title: "Some", id: 1},
+             %Todo{date: ~D[2024-10-01], title: "kind", id: 2},
+             %Todo{date: ~D[2024-11-01], title: "of", id: 3},
+             %Todo{date: ~D[2024-11-01], title: "blue", id: 4}
+           ]
+  end
 end
