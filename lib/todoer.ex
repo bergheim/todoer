@@ -3,11 +3,11 @@ defmodule Todo do
 end
 
 defmodule Todoer do
-  alias Todoer.CsvImporter
+  alias Todoer.CsvHelper
   defstruct next_id: 1, entries: %{}
 
   def start() do
-    todo_list = CsvImporter.import("todos.csv")
+    todo_list = CsvHelper.import("todos.csv")
     IO.puts(todo_list)
   end
 

@@ -1,4 +1,4 @@
-defmodule Todoer.CsvImporter do
+defmodule Todoer.CsvHelper do
   def import(filename) do
     entries =
       File.stream!(filename)
@@ -11,5 +11,16 @@ defmodule Todoer.CsvImporter do
       end)
 
     Todoer.new(entries)
+  end
+
+  def export(todo_list, filename) do
+    File.write!(
+      filename,
+      Todoer.entries(todo_list)
+      |> Enum.map(fn %Todo{date: date, title: title} ->
+        "#{date},#{title}"
+      end)
+      |> Enum.join("\n")
+    )
   end
 end
