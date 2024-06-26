@@ -1,7 +1,8 @@
-defmodule CsvImporterTest do
+defmodule CsvHelperTest do
   use ExUnit.Case
   doctest Todoer
 
+  # @tag :one
   test "can load todos from a file" do
     todo_list = Todoer.CsvHelper.import("todos.csv")
 

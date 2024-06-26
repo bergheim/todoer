@@ -10,8 +10,17 @@ defmodule TodoerTest do
     |> Todoer.add_entry(%Todo{date: ~D[2024-11-01], title: "blue"})
   end
 
+  def equal_todoers?(%Todoer{entries: entries1, next_id: next_id1}, %Todoer{
+        entries: entries2,
+        next_id: next_id2
+      }) do
+    entries1 == entries2 and next_id1 == next_id2
+  end
+
   test "a new todo list is empty" do
-    assert Todoer.new() == %Todoer{}
+    todo_list = Todoer.new()
+    assert %Todoer{todo_list | pid: nil} == %Todoer{}
+    assert todo_list.pid != nil
   end
 
   test "can add a new entry" do
@@ -41,7 +50,9 @@ defmodule TodoerTest do
 
   test "can add new entries using comprehension" do
     todo_list = generate_todos()
-    assert Enum.into(todo_list, Todoer.new()) == todo_list
+    duplicate_todo_list = Enum.into(todo_list, Todoer.new())
+
+    assert equal_todoers?(duplicate_todo_list, todo_list)
   end
 
   test "can find an entry for a date" do
@@ -207,5 +218,14 @@ defmodule TodoerTest do
              2024-11-01: of
              2024-11-01: blue\
              """
+  end
+
+  test "can create many TODO lists (as unique processes)" do
+    todo_list = generate_todos()
+    todo_list2 = generate_todos()
+    todo_list3 = generate_todos()
+
+    assert equal_todoers?(todo_list, todo_list2)
+    assert equal_todoers?(todo_list2, todo_list3)
   end
 end

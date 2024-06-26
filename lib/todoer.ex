@@ -2,28 +2,84 @@ defmodule Todo do
   defstruct [:id, :date, :title, :status]
 end
 
+# TODO should this be moved to application.ex or todoer_app.. or todoer/app..?
+defmodule Todoer.Application do
+  use Application
+
+  def start(_type, _args) do
+    children = [
+      {Registry, keys: :unique, name: Todoer.Registry},
+      {Todoer, []}
+    ]
+
+    opts = [strategy: :one_for_one, name: Todoer.Supervisor]
+    Supervisor.start_link(children, opts)
+  end
+end
+
 defmodule Todoer do
+  use GenServer
+  require Logger
   alias Todoer.CsvHelper
-  defstruct next_id: 1, entries: %{}
+  defstruct next_id: 1, entries: %{}, pid: nil
+
+  # GenServer setup
+  def start_link(initial_entries \\ %Todoer{}, name) do
+    GenServer.start_link(__MODULE__, initial_entries,
+      name: {:via, Registry, {Todoer.Registry, name}}
+    )
+  end
+
+  def add_entry(todo_list, entry) do
+    updated_entries = GenServer.call(todo_list.pid, {:add_entry, entry})
+    %Todoer{todo_list | entries: updated_entries, next_id: map_size(updated_entries) + 1}
+  end
+
+  def list_entries(pid) do
+    GenServer.call(pid, :list_entries)
+  end
+
+  @impl true
+  def init(initial_state) do
+    {:ok, initial_state}
+  end
+
+  @impl true
+  def handle_call(:list_entries, _from, state), do: {:reply, state.entries, state}
+
+  @impl true
+  def handle_call({:add_entry, entry}, _from, state) do
+    entry = Map.put(entry, :id, state.next_id)
+    new_entries = Map.put(state.entries, state.next_id, entry)
+    new_state = %Todoer{state | entries: new_entries, next_id: state.next_id + 1}
+
+    {:reply, new_state.entries, new_state}
+  end
 
   def start() do
     todo_list = CsvHelper.import("todos.csv")
     IO.puts(todo_list)
   end
 
-  def new(), do: %Todoer{}
+  def new() do
+    unique_id = :erlang.unique_integer([:positive, :monotonic])
+    unique_name = {:via, Registry, {Neowellwise.Registry, {:todoer, unique_id}}}
+    # Logger.info("Creating Todoer with unique id: #{unique_id}")
 
-  def new(entries) do
-    Enum.reduce(entries, %Todoer{}, fn entry, acc ->
-      add_entry(acc, entry)
-    end)
+    {:ok, pid} = start_link(%Todoer{}, unique_name)
+    %Todoer{pid: pid}
   end
 
-  def add_entry(todo_list, entry) do
-    entry = Map.put(entry, :id, todo_list.next_id)
-    new_entries = Map.put(todo_list.entries, todo_list.next_id, entry)
+  def new(entries) do
+    todo_list = Todoer.new()
 
-    %Todoer{todo_list | entries: new_entries, next_id: todo_list.next_id + 1}
+    todo_list =
+      Enum.reduce(entries, %Todoer{pid: todo_list.pid, next_id: 1, entries: %Todo{}}, fn entry,
+                                                                                         acc ->
+        add_entry(acc, entry)
+      end)
+
+    %Todoer{entries: todo_list.entries, pid: todo_list.pid, next_id: todo_list.next_id + 1}
   end
 
   def update_entry(todo_list, entry) do
@@ -120,7 +176,6 @@ end
 
 defimpl Enumerable, for: Todoer do
   @impl true
-  @spec count(Todoer.t()) :: {:ok, non_neg_integer()}
   def count(%Todoer{entries: entries}) do
     {:ok, map_size(entries)}
   end
