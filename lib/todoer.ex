@@ -47,6 +47,11 @@ defmodule Todoer do
     end
   end
 
+  def remove(todo_list, todo) do
+    Todoer.entries(todo_list)
+    |> Enum.filter(fn entry -> entry != todo end)
+  end
+
   def entries(todo_list, date \\ nil) do
     entries = Map.values(todo_list.entries)
 

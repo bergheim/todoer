@@ -108,6 +108,18 @@ defmodule TodoerTest do
            ]
   end
 
+  test "can delete a TODO" do
+    todo_list = generate_todos()
+    todo = %Todo{date: ~D[2024-11-01], title: "of", id: 3}
+    todo_list = Todoer.remove(todo_list, todo)
+
+    assert todo_list == [
+             %Todo{date: ~D[2024-01-01], title: "Some", id: 1},
+             %Todo{date: ~D[2024-10-01], title: "kind", id: 2},
+             %Todo{date: ~D[2024-11-01], title: "blue", id: 4}
+           ]
+  end
+
   test "can set a TODO as done" do
     todo_list = [
       %Todo{date: ~D[2024-01-01], title: "Some", id: 1}
