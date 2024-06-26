@@ -29,6 +29,7 @@ defmodule Todoer do
   def update_entry(todo_list, entry) do
     updated_entries =
       Map.update(todo_list.entries, entry.id, todo_list.entries, fn e ->
+        # if the new entry does not have a key (ie it is nil), keep the existing one
         Map.merge(e, entry, fn _key, v1, v2 -> if v2 == nil, do: v1, else: v2 end)
       end)
 
@@ -48,8 +49,15 @@ defmodule Todoer do
   end
 
   def remove(todo_list, todo) do
-    Todoer.entries(todo_list)
-    |> Enum.filter(fn entry -> entry != todo end)
+    case todo do
+      id when is_integer(id) ->
+        Map.delete(todo_list.entries, id)
+        |> Map.values()
+
+      %{} ->
+        Todoer.entries(todo_list)
+        |> Enum.filter(fn entry -> entry != todo end)
+    end
   end
 
   def entries(todo_list, date \\ nil) do
