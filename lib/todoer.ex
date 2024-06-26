@@ -55,8 +55,8 @@ defmodule Todoer do
         |> Map.values()
 
       %{} ->
-        Todoer.entries(todo_list)
-        |> Enum.filter(fn entry -> entry != todo end)
+        Map.delete(todo_list.entries, todo.id)
+        |> Map.values()
     end
   end
 
