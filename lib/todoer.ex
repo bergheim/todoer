@@ -48,16 +48,14 @@ defmodule Todoer do
     end
   end
 
-  def remove(todo_list, todo) do
-    case todo do
-      id when is_integer(id) ->
-        Map.delete(todo_list.entries, id)
-        |> Map.values()
+  def remove(todo_list, id) when is_integer(id) do
+    todo_list.entries
+    |> Map.delete(id)
+    |> Map.values()
+  end
 
-      %{} ->
-        Map.delete(todo_list.entries, todo.id)
-        |> Map.values()
-    end
+  def remove(todo_list, %Todo{} = todo) do
+    remove(todo_list, todo.id)
   end
 
   def entries(todo_list, date \\ nil) do
