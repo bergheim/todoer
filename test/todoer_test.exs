@@ -194,4 +194,18 @@ defmodule TodoerTest do
 
     assert todo == %Todo{date: ~D[2024-11-09], title: "of", id: 3}
   end
+
+  test "can call to_string to get TODOs" do
+    todo_list =
+      generate_todos()
+      |> String.Chars.to_string()
+
+    assert todo_list ==
+             """
+             2024-01-01: Some
+             2024-10-01: kind
+             2024-11-01: of
+             2024-11-01: blue\
+             """
+  end
 end
