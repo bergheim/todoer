@@ -1,7 +1,3 @@
-defmodule Todo do
-  defstruct [:id, :date, :title, :status]
-end
-
 defmodule Todoer do
   use GenServer
   require Logger
@@ -34,7 +30,7 @@ defmodule Todoer do
 
   @impl true
   def handle_call({:add_entry, entry}, _from, state) do
-    entry = Map.put(entry, :id, state.next_id)
+    entry = Todo.new(Map.put(entry, :id, state.next_id))
     new_entries = Map.put(state.entries, state.next_id, entry)
     new_state = %Todoer{state | entries: new_entries, next_id: state.next_id + 1}
 
@@ -83,7 +79,7 @@ defmodule Todoer do
         todo_list
 
       {:ok, old_entry} ->
-        new_entry = updater.(old_entry)
+        new_entry = Todo.update(old_entry, updater)
         updated_entries = Map.put(todo_list.entries, todo_id, new_entry)
         %{todo_list | entries: updated_entries}
     end
@@ -117,6 +113,7 @@ defmodule Todoer do
   def done(todo), do: Map.put(todo, :status, :done)
 
   def get_done(todo_list) do
+    # TODO can we do stuff like this now that the entries are processes?
     Todoer.entries(todo_list)
     |> Enum.filter(fn todo -> todo.status == :done end)
   end
@@ -124,11 +121,6 @@ defmodule Todoer do
   def get_active(todo_list) do
     Todoer.entries(todo_list)
     |> Enum.filter(fn todo -> todo.status == nil end)
-  end
-
-  def postpone(todo, days \\ Enum.random(1..10)) do
-    date = Date.add(todo.date, days)
-    %Todo{todo | date: date}
   end
 end
 
