@@ -2,6 +2,7 @@ defmodule CsvHelperTest do
   use ExUnit.Case
   import TodoerTestHelper
   alias Todoer.TodoList
+  alias Todoer.Todo
   doctest Todoer.CsvHelper
 
   # @tag :one

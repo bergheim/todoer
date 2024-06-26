@@ -2,6 +2,7 @@ defmodule TodoerTest do
   use ExUnit.Case
   import TodoerTestHelper
   alias Todoer.TodoList
+  alias Todoer.Todo
   doctest Todoer.TodoList
 
   def generate_todos() do

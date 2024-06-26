@@ -1,5 +1,6 @@
 defmodule Todoer.CsvHelper do
   alias Todoer.TodoList
+  alias Todoer.Todo
 
   def import(filename) do
     entries =

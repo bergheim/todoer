@@ -1,6 +1,7 @@
 defmodule TodoTest do
   use ExUnit.Case
-  doctest Todo
+  doctest Todoer.Todo
+  alias Todoer.Todo
 
   def equal_todo?(%Todo{date: date, title: title, status: status}, %Todo{
         date: date2,

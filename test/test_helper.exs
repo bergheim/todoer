@@ -2,6 +2,7 @@ ExUnit.start()
 
 defmodule TodoerTestHelper do
   alias Todoer.TodoList
+  alias Todoer.Todo
 
   defp strip_dynamic_fields(%Todo{date: date, title: title, status: status}) do
     %Todo{date: date, title: title, status: status}

@@ -3,6 +3,7 @@ defmodule Todoer.TodoList do
   require Logger
   alias Todoer.CsvHelper
   alias Todoer.TodoList
+  alias Todoer.Todo
   defstruct next_id: 1, entries: %{}, pid: nil
 
   # GenServer setup
@@ -133,7 +134,7 @@ defimpl String.Chars, for: Todoer.TodoList do
   end
 end
 
-defimpl String.Chars, for: Todo do
+defimpl String.Chars, for: Todoer.Todo do
   def to_string(todo) do
     Date.to_string(todo.date) <> ": " <> todo.title
   end

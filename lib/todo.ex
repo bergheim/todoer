@@ -1,4 +1,4 @@
-defmodule Todo do
+defmodule Todoer.Todo do
   use GenServer
   require Logger
 
@@ -9,18 +9,18 @@ defmodule Todo do
     {:ok, initial_state}
   end
 
-  def start_link(initial_todo \\ %Todo{}, id) do
+  def start_link(initial_todo \\ %__MODULE__{}, id) do
     GenServer.start_link(__MODULE__, initial_todo, name: {:via, Registry, {Todoer.Registry, id}})
   end
 
-  def new(%Todo{} = entry \\ %Todo{}) do
+  def new(%__MODULE__{} = entry \\ %__MODULE__{}) do
     unique_id = :erlang.unique_integer([:positive, :monotonic])
     unique_name = {:via, Registry, {Todoer.Registry, {:todo, unique_id}}}
 
-    # Logger.info("Creating Todo with unique id: #{unique_id}")
+    # Logger.info("Creating __MODULE__ with unique id: #{unique_id}")
     {:ok, pid} = start_link(entry, unique_name)
 
-    %Todo{
+    %__MODULE__{
       pid: pid,
       id: unique_id,
       date: entry.date,
@@ -29,9 +29,9 @@ defmodule Todo do
     }
   end
 
-  def postpone(%Todo{} = todo, days \\ Enum.random(1..10)) do
+  def postpone(%__MODULE__{} = todo, days \\ Enum.random(1..10)) do
     state = GenServer.call(todo.pid, {:postpone, days})
-    %Todo{todo | date: state.date}
+    %__MODULE__{todo | date: state.date}
   end
 
   # TODO what about update??
@@ -40,9 +40,9 @@ defmodule Todo do
   end
 
   @impl true
-  def handle_call({:postpone, days}, _from, %Todo{} = state) do
+  def handle_call({:postpone, days}, _from, %__MODULE__{} = state) do
     date = Date.add(state.date, days)
-    todo = %Todo{state | date: date}
+    todo = %__MODULE__{state | date: date}
     {:reply, todo, todo}
   end
 
