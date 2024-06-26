@@ -18,8 +18,8 @@ defmodule Todoer.TodoList do
     %TodoList{todo_list | entries: updated_entries, next_id: map_size(updated_entries) + 1}
   end
 
-  def list_entries(pid) do
-    GenServer.call(pid, :list_entries)
+  def list_entries(todo_list) do
+    GenServer.call(todo_list.pid, :list_entries)
   end
 
   @impl true
