@@ -1,6 +1,8 @@
 ExUnit.start()
 
 defmodule TodoerTestHelper do
+  alias Todoer.TodoList
+
   defp strip_dynamic_fields(%Todo{date: date, title: title, status: status}) do
     %Todo{date: date, title: title, status: status}
   end
@@ -13,8 +15,8 @@ defmodule TodoerTestHelper do
   end
 
   def equal_todoers?(
-        %Todoer{entries: entries1, next_id: next_id1},
-        %Todoer{entries: entries2, next_id: next_id2}
+        %TodoList{entries: entries1, next_id: next_id1},
+        %TodoList{entries: entries2, next_id: next_id2}
       ) do
     equal_todoers?(
       Map.values(entries1),

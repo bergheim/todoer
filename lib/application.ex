@@ -5,7 +5,7 @@ defmodule Todoer.Application do
   def start(_type, _args) do
     children = [
       {Registry, keys: :unique, name: Todoer.Registry},
-      {Todoer, []}
+      {Todoer.TodoList, []}
     ]
 
     opts = [strategy: :one_for_one, name: Todoer.Supervisor]
