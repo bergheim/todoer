@@ -1,0 +1,5 @@
+* todos
+** TODO the data in `generate_todos` do not have :id
+so I have to add it manually when I compare. better ways?
+** TODO `postpone` uses a random number of days by default
+can I test this by initializing the rng in our tests?
